@@ -3,35 +3,37 @@ import axios from "axios";
 import LineChart from "./LineChart";
 
 const ChartComponent = () => {
-  const [selectedRange, setSelectedRange] = useState("1w");
+  const [timeRange, setTimeRange] = useState("1w"); // Default time range
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const timeRanges = ["1d", "3d", "1w", "1m", "6m", "1y", "max"];
 
-  const fetchChartData = async (range) => {
+  const fetchChartData = async () => {
     setLoading(true);
     try {
       // Mock API URL
       const response = await axios.get(
-        `https://run.mocky.io/v3/7d76cd55-6154-43d1-9da7-774182d3ab0e?range=${range}`
+        "https://67801fab0476123f76a9a8b5.mockapi.io/api/chartData"
       );
-
-      // Map response data
-      const { labels, data } = response.data[range];
-
-      setChartData({
-        labels,
-        datasets: [
-          {
-            label: "Value",
-            data,
-            borderColor: "#4F46E5",
-            backgroundColor: "rgba(79, 70, 229, 0.2)",
-            tension: 0.4,
-          },
-        ],
-      });
+      const dataForRange = response.data.find(
+        (entry) => entry.range === timeRange
+      ); // Filter data by selected range
+      if (dataForRange) {
+        setChartData({
+          labels: dataForRange.labels,
+          datasets: [
+            {
+              label: "Price (USD)",
+              data: dataForRange.data,
+              fill: true,
+              borderColor: "#4F46E5",
+              backgroundColor: "rgba(79, 70, 229, 0.2)",
+              tension: 0.2,
+            },
+          ],
+        });
+      }
     } catch (error) {
       console.error("Error fetching chart data:", error);
     } finally {
@@ -40,8 +42,8 @@ const ChartComponent = () => {
   };
 
   useEffect(() => {
-    fetchChartData(selectedRange);
-  }, [selectedRange]);
+    fetchChartData();
+  }, [timeRange]);
 
   const chartOptions = {
     responsive: true,
@@ -50,13 +52,12 @@ const ChartComponent = () => {
       tooltip: { enabled: true },
     },
     scales: {
-      x: { grid: { display: false } },
+      x: {
+        display: false,
+        grid: { display: false },
+      },
       y: { grid: { color: "#E5E7EB" }, beginAtZero: false },
     },
-  };
-
-  const handleRangeChange = (range) => {
-    setSelectedRange(range);
   };
 
   return (
@@ -72,12 +73,12 @@ const ChartComponent = () => {
           {timeRanges.map((range) => (
             <button
               key={range}
-              className={`px-4 py-2 rounded-md ${
-                selectedRange === range
+              onClick={() => setTimeRange(range)}
+              className={`px-4 py-2 rounded ${
+                range === timeRange
                   ? "bg-blue-500 text-white"
                   : "bg-gray-100 text-gray-700"
               }`}
-              onClick={() => handleRangeChange(range)}
             >
               {range}
             </button>
