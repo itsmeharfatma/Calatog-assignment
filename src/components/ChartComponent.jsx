@@ -27,8 +27,8 @@ const ChartComponent = () => {
               label: "Price (USD)",
               data: dataForRange.data,
               fill: true,
-              borderColor: "#4F46E5",
-              backgroundColor: "rgba(79, 70, 229, 0.2)",
+              borderColor: "#4B40EE",
+              backgroundColor: "rgba(75, 64, 238, 0.2)",
               tension: 0.2,
             },
           ],
@@ -61,23 +61,31 @@ const ChartComponent = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-4">
-      <div className="text-center mb-4">
-        <h2 className="text-4xl font-bold">63,179.71 USD</h2>
-        <p className="text-green-500 text-lg">+2,161.42 (3.54%)</p>
-      </div>
-      <div className="border-t border-b py-2 flex justify-center items-center space-x-4">
-        <button className="text-blue-500 font-medium">Fullscreen</button>
-        <button className="text-blue-500 font-medium">Compare</button>
+    <div className="w-full mx-auto py-4">
+      <div className="py-2 flex flex-col md:flex-row justify-start md:justify-between space-x-4 max-md:space-y-3">
+        <div className="flex flex-row gap-6 text-[#6F7177] font-medium">
+          <button className="hover:bg-gray-100 px-4 py-2 rounded-md">
+            <i className="fas fa-up-right-and-down-left-from-center mr-2"></i>
+            Fullscreen
+          </button>
+          <button className="hover:bg-gray-100 px-4 py-2 rounded-md">
+            <i
+              className="far fa-circle-xmark fa-rotate-by fa-lg mr-2"
+              style={{ transform: "rotate(45deg)" }}
+            ></i>
+            Compare
+          </button>
+        </div>
+
         <div className="flex space-x-2">
           {timeRanges.map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-4 py-2 rounded ${
+              className={`px-4 py-1.5 rounded-md font-medium ${
                 range === timeRange
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 text-gray-700"
+                  ? "bg-[#4B40EE] text-white"
+                  : "text-[#6F7177] hover:bg-gray-100"
               }`}
             >
               {range}
