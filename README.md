@@ -18,7 +18,7 @@ This project implements a responsive and interactive chart component using React
 
 Clone the Repository:
 
-### `git clone https://github.com/itsmeharfatma/Calatog-assignment.git`
+### `git clone https://github.com/itsmeharfatma/Catalog-assignment.git`
 
 Install Dependencies:
 
