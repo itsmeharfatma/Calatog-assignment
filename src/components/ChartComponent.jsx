@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import LineChart from "./LineChart";
+import useWindowWidth from "./useWindowWidth";
 
 const ChartComponent = () => {
   const [timeRange, setTimeRange] = useState("1w"); // Default time range
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const windowWidth = useWindowWidth();
 
   const timeRanges = ["1d", "3d", "1w", "1m", "6m", "1y", "max"];
 
@@ -58,12 +60,13 @@ const ChartComponent = () => {
       },
       y: { grid: { color: "#E5E7EB" }, beginAtZero: false },
     },
+    aspectRatio: windowWidth < 768 ? 1 / 2 : undefined,
   };
 
   return (
     <div className="w-full mx-auto py-4">
       <div className="py-2 flex flex-col md:flex-row justify-start md:justify-between space-x-4 max-md:space-y-3">
-        <div className="flex flex-row gap-6 text-[#6F7177] font-medium">
+        <div className="flex flex-row gap-2 text-[#6F7177] text-sm font-medium">
           <button className="hover:bg-gray-100 px-4 py-2 rounded-md">
             <i className="fas fa-up-right-and-down-left-from-center mr-2"></i>
             Fullscreen
@@ -77,12 +80,12 @@ const ChartComponent = () => {
           </button>
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex flex-row flex-wrap space-x-2 max-md:space-y-2">
           {timeRanges.map((range) => (
             <button
               key={range}
               onClick={() => setTimeRange(range)}
-              className={`px-4 py-1.5 rounded-md font-medium ${
+              className={`px-4 py-1.5 rounded-md font-medium text-sm ${
                 range === timeRange
                   ? "bg-[#4B40EE] text-white"
                   : "text-[#6F7177] hover:bg-gray-100"
@@ -95,9 +98,11 @@ const ChartComponent = () => {
       </div>
       <div className="mt-6">
         {loading ? (
-          <p className="text-center">Loading chart...</p>
+          <p className="mt-32 font-medium text-center text-[#6F7177] lg:text-2xl">Loading chart...</p>
         ) : chartData ? (
-          <LineChart chartData={chartData} chartOptions={chartOptions} />
+          <div className="justify-center w-full">
+            <LineChart chartData={chartData} chartOptions={chartOptions} />
+          </div>
         ) : (
           <p className="text-center">No data available</p>
         )}
