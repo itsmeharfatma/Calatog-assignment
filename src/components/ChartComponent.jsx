@@ -89,7 +89,7 @@ const ChartComponent = () => {
   return (
     <div className="w-full mx-auto py-4">
       <div className="py-2 flex flex-col md:flex-row justify-start md:justify-between space-x-4 max-md:space-y-3">
-        <div className="flex flex-row gap-2 text-[#6F7177] text-sm font-medium">
+        <div className="flex flex-row gap-2 text-grayColor text-sm font-medium">
           <button
             className="hover:bg-gray-100 px-4 py-2 rounded-md"
             onClick={toggleFullScreen}
@@ -113,8 +113,8 @@ const ChartComponent = () => {
               onClick={() => setTimeRange(range)}
               className={`px-4 py-1.5 rounded-md font-medium text-sm ${
                 range === timeRange
-                  ? "bg-[#4B40EE] text-white"
-                  : "text-[#6F7177] hover:bg-gray-100"
+                  ? "bg-accentColor text-white"
+                  : "text-grayColor hover:bg-gray-100"
               }`}
             >
               {range}
@@ -131,7 +131,7 @@ const ChartComponent = () => {
         ref={chartContainerRef}
       >
         {loading ? (
-          <p className="mt-32 font-medium text-center text-[#6F7177] lg:text-2xl">
+          <p className="mt-32 font-medium text-center text-grayColor lg:text-2xl">
             Loading chart...
           </p>
         ) : chartData ? (
