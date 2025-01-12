@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import LineChart from "./LineChart";
 import useWindowWidth from "./useWindowWidth";
@@ -7,6 +7,8 @@ const ChartComponent = () => {
   const [timeRange, setTimeRange] = useState("1w"); // Default time range
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const chartContainerRef = useRef(null);
   const windowWidth = useWindowWidth();
 
   const timeRanges = ["1d", "3d", "1w", "1m", "6m", "1y", "max"];
@@ -63,11 +65,35 @@ const ChartComponent = () => {
     aspectRatio: windowWidth < 768 ? 1 / 2 : undefined,
   };
 
+  // Full-Screen Functionality with ESC Handling
+  const toggleFullScreen = () => {
+    const element = chartContainerRef.current;
+    if (!document.fullscreenElement) {
+      element?.requestFullscreen().then(() => setIsFullScreen(true));
+    } else {
+      document.exitFullscreen().then(() => setIsFullScreen(false));
+    }
+  };
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullScreenChange);
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullScreenChange);
+    };
+  }, []);
+
   return (
     <div className="w-full mx-auto py-4">
       <div className="py-2 flex flex-col md:flex-row justify-start md:justify-between space-x-4 max-md:space-y-3">
         <div className="flex flex-row gap-2 text-[#6F7177] text-sm font-medium">
-          <button className="hover:bg-gray-100 px-4 py-2 rounded-md">
+          <button
+            className="hover:bg-gray-100 px-4 py-2 rounded-md"
+            onClick={toggleFullScreen}
+          >
             <i className="fas fa-up-right-and-down-left-from-center mr-2"></i>
             Fullscreen
           </button>
@@ -96,15 +122,34 @@ const ChartComponent = () => {
           ))}
         </div>
       </div>
-      <div className="mt-6">
+      <div
+        className={`${
+          isFullScreen
+            ? "fixed inset-0 bg-white z-50 top-0 left-0 lg:pt-20 lg:px-20"
+            : "relative"
+        } mt-6`}
+        ref={chartContainerRef}
+      >
         {loading ? (
-          <p className="mt-32 font-medium text-center text-[#6F7177] lg:text-2xl">Loading chart...</p>
+          <p className="mt-32 font-medium text-center text-[#6F7177] lg:text-2xl">
+            Loading chart...
+          </p>
         ) : chartData ? (
           <div className="justify-center w-full">
             <LineChart chartData={chartData} chartOptions={chartOptions} />
           </div>
         ) : (
           <p className="text-center">No data available</p>
+        )}
+
+        {isFullScreen && (
+          <button
+            className="absolute top-4 right-4 bg-red-600 text-sm text-white px-4 py-2 rounded-md"
+            onClick={toggleFullScreen}
+          >
+            <i class="fas fa-down-left-and-up-right-to-center mr-2"></i>
+            Exit Fullscreen
+          </button>
         )}
       </div>
     </div>
